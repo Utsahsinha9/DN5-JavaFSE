@@ -1,0 +1,6 @@
+com\dn5\springcore\ReportService.class
+com\dn5\springcore\App.class
+com\dn5\springcore\AppConfig.class
+com\dn5\springcore\OrderService.class
+com\dn5\springcore\Notifier.class
+com\dn5\springcore\SmsNotifier.class
