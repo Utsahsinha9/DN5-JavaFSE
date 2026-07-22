@@ -1,0 +1,5 @@
+com\dn5\springcore\MessageService.class
+com\dn5\springcore\App.class
+com\dn5\springcore\AppConfig.class
+com\dn5\springcore\EmailService.class
+com\dn5\springcore\MessagePrinter.class
