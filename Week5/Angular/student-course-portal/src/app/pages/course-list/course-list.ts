@@ -13,18 +13,83 @@ import { CourseService, Course } from '../../services/course';
 export class CourseList implements OnInit {
 
   isLoading = true;
-
   courses: Course[] = [];
-
   selectedCourseId: number | null = null;
+  errorMessage = '';
 
   constructor(private courseService: CourseService) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.courses = this.courseService.getCourses();
-      this.isLoading = false;
-    }, 1500);
+    this.loadCourses();
+  }
+
+  loadCourses(): void {
+    this.isLoading = true;
+
+    this.courseService.getCourses().subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'Failed to load courses.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  addSampleCourse(): void {
+    const newCourse: Course = {
+      id: 106,
+      name: 'Node.js',
+      code: 'NODE106',
+      credits: 4,
+      gradeStatus: 'pending'
+    };
+
+    this.courseService.addCourse(newCourse).subscribe({
+      next: () => {
+        alert('Course Added Successfully');
+        this.loadCourses();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  updateFirstCourse(): void {
+    if (this.courses.length === 0) {
+      return;
+    }
+
+    const updatedCourse: Course = {
+      ...this.courses[0],
+      name: 'Angular Advanced'
+    };
+
+    this.courseService.updateCourse(updatedCourse).subscribe({
+      next: () => {
+        alert('Course Updated Successfully');
+        this.loadCourses();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  deleteLastCourse(): void {
+    if (this.courses.length === 0) {
+      return;
+    }
+
+    const lastCourse = this.courses[this.courses.length - 1];
+
+    this.courseService.deleteCourse(lastCourse.id).subscribe({
+      next: () => {
+        alert('Course Deleted Successfully');
+        this.loadCourses();
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   trackByCourseId(index: number, course: Course): number {

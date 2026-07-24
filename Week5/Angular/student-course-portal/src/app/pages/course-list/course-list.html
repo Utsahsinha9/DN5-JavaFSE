@@ -1,6 +1,14 @@
 <p *ngIf="isLoading">Loading courses...</p>
 
 <div *ngIf="!isLoading">
+  <button (click)="addSampleCourse()">Add Sample Course</button>
+
+  <button (click)="updateFirstCourse()">Update First Course</button>
+
+  <button (click)="deleteLastCourse()">Delete Last Course</button>
+
+  <br /><br />
+
   <div *ngFor="let course of courses">
     <app-course-card [course]="course" (enrollRequested)="onEnroll($event)"> </app-course-card>
 

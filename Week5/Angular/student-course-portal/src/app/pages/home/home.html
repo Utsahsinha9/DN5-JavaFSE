@@ -9,5 +9,5 @@
 <p><strong>Total Courses:</strong> {{ totalCourses }}</p>
 
 <ul>
-  <li *ngFor="let course of courses">{{ course.name }} - {{ course.instructor }}</li>
+  <li *ngFor="let course of courses">{{ course.name }} ({{ course.code }})</li>
 </ul>
