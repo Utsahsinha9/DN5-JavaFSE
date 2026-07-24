@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseCardComponent } from '../../components/course-card/course-card';
+import { CourseService, Course } from '../../services/course';
 
 @Component({
   selector: 'app-course-list',
@@ -10,27 +11,23 @@ import { CourseCardComponent } from '../../components/course-card/course-card';
   styleUrls: ['./course-list.css']
 })
 export class CourseList implements OnInit {
+
   isLoading = true;
 
-  courses = [
-    { id: 1, name: 'Data Structures', code: 'CS101', credits: 4, gradeStatus: 'passed' },
-    { id: 2, name: 'Operating Systems', code: 'CS201', credits: 3, gradeStatus: 'pending' },
-    { id: 3, name: 'Database Systems', code: 'CS301', credits: 4, gradeStatus: 'failed' },
-    { id: 4, name: 'Computer Networks', code: 'CS401', credits: 3, gradeStatus: 'passed' },
-    { id: 5, name: 'Software Engineering', code: 'CS501', credits: 4, gradeStatus: 'pending' }
-  ];
+  courses: Course[] = [];
+
   selectedCourseId: number | null = null;
+
+  constructor(private courseService: CourseService) {}
 
   ngOnInit(): void {
     setTimeout(() => {
+      this.courses = this.courseService.getCourses();
       this.isLoading = false;
     }, 1500);
   }
 
-  // trackBy avoids re-rendering every card when the array reference changes —
-  // Angular only updates cards whose id actually changed, instead of destroying
-  // and recreating every DOM node in the list.
-  trackByCourseId(index: number, course: any): number {
+  trackByCourseId(index: number, course: Course): number {
     return course.id;
   }
 
