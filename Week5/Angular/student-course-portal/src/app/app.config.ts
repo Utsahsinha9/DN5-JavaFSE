@@ -2,12 +2,31 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+
 import { routes } from './app.routes';
+
+import { courseReducer } from './store/course.reducer';
+import { CourseEffects } from './store/course.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+
     provideRouter(routes),
-    provideHttpClient()
+
+    provideHttpClient(),
+
+    provideStore({
+      courses: courseReducer
+    }),
+
+    provideEffects(CourseEffects),
+
+    provideStoreDevtools({
+      maxAge: 25
+    })
   ]
 };

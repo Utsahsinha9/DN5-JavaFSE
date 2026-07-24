@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
+
 import { CourseCardComponent } from '../../components/course-card/course-card';
 import { CourseService, Course } from '../../services/course';
+
+import * as CourseActions from '../../store/course.actions';
+import { selectAllCourses, selectCoursesLoading } from '../../store/course.selectors';
 
 @Component({
   selector: 'app-course-list',
@@ -17,26 +22,25 @@ export class CourseList implements OnInit {
   selectedCourseId: number | null = null;
   errorMessage = '';
 
-  constructor(private courseService: CourseService) {}
+  constructor(
+    private courseService: CourseService,
+    private store: Store
+  ) {}
 
   ngOnInit(): void {
-    this.loadCourses();
-  }
 
-  loadCourses(): void {
-    this.isLoading = true;
+    // Dispatch action
+    this.store.dispatch(CourseActions.loadCourses());
 
-    this.courseService.getCourses().subscribe({
-      next: (courses) => {
-        this.courses = courses;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.errorMessage = 'Failed to load courses.';
-        this.isLoading = false;
-      }
-    });
+    // Read loading state
+    this.store.select(selectCoursesLoading).subscribe(
+      loading => this.isLoading = loading
+    );
+
+    // Read courses from store
+    this.store.select(selectAllCourses).subscribe(
+      courses => this.courses = courses
+    );
   }
 
   addSampleCourse(): void {
@@ -48,47 +52,36 @@ export class CourseList implements OnInit {
       gradeStatus: 'pending'
     };
 
-    this.courseService.addCourse(newCourse).subscribe({
-      next: () => {
-        alert('Course Added Successfully');
-        this.loadCourses();
-      },
-      error: (err) => console.error(err)
+    this.courseService.addCourse(newCourse).subscribe(() => {
+      alert('Course Added Successfully');
+      this.store.dispatch(CourseActions.loadCourses());
     });
   }
 
   updateFirstCourse(): void {
-    if (this.courses.length === 0) {
-      return;
-    }
+
+    if (this.courses.length === 0) return;
 
     const updatedCourse: Course = {
       ...this.courses[0],
       name: 'Angular Advanced'
     };
 
-    this.courseService.updateCourse(updatedCourse).subscribe({
-      next: () => {
-        alert('Course Updated Successfully');
-        this.loadCourses();
-      },
-      error: (err) => console.error(err)
+    this.courseService.updateCourse(updatedCourse).subscribe(() => {
+      alert('Course Updated Successfully');
+      this.store.dispatch(CourseActions.loadCourses());
     });
   }
 
   deleteLastCourse(): void {
-    if (this.courses.length === 0) {
-      return;
-    }
+
+    if (this.courses.length === 0) return;
 
     const lastCourse = this.courses[this.courses.length - 1];
 
-    this.courseService.deleteCourse(lastCourse.id).subscribe({
-      next: () => {
-        alert('Course Deleted Successfully');
-        this.loadCourses();
-      },
-      error: (err) => console.error(err)
+    this.courseService.deleteCourse(lastCourse.id).subscribe(() => {
+      alert('Course Deleted Successfully');
+      this.store.dispatch(CourseActions.loadCourses());
     });
   }
 

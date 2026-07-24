@@ -10,11 +10,12 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CourseDetail {
 
-  courseId: string | null = '';
+  courseId: string | null = null;
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.courseId = this.route.snapshot.paramMap.get('id');
   }
+
 }
